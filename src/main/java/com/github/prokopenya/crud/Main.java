@@ -28,6 +28,8 @@ public class Main {
         Optional<Person> personPetya = personDAO.get(2);
 
         personDAO.remove(1);
+
+        personDAO.clear();
     }
 
 }
