@@ -50,11 +50,7 @@ public class PersonsDAO implements DAO<Person> {
         addPrepStatement.setString(2, person.getName());
         addPrepStatement.setString(3, person.getPhone());
 
-        if (addPrepStatement.execute()) {
-            logger.info("Element {} added to {} table", person, Queries.StudentTable.TABLE_NAME);
-        } else {
-            logger.error("Can't add person {} to {} table", person, Queries.StudentTable.TABLE_NAME);
-        }
+        logger.info("Element {} added to {} table", person, Queries.StudentTable.TABLE_NAME);
     }
 
     @Override
