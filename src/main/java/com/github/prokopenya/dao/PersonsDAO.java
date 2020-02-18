@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +16,7 @@ public class PersonsDAO implements DAO<Person> {
     private final PreparedStatement removePrepStatement;
     private final PreparedStatement addPrepStatement;
     private final PreparedStatement getByIdPrepStatement;
+    private final PreparedStatement getAllPrepStatement;
 
     public PersonsDAO(Connection conn) {
         this.conn = conn;
@@ -23,6 +25,7 @@ public class PersonsDAO implements DAO<Person> {
             this.removePrepStatement  = conn.prepareStatement(Queries.StudentTable.REMOVE_BY_ID);
             this.addPrepStatement     = conn.prepareStatement(Queries.StudentTable.ADD);
             this.getByIdPrepStatement = conn.prepareStatement(Queries.StudentTable.GET_BY_ID);
+            this.getAllPrepStatement  = conn.prepareStatement(Queries.StudentTable.GET_ALL);
         } catch (SQLException e) {
             logger.error("Can't create prepared statement");
             throw new IllegalStateException(e);
@@ -91,7 +94,22 @@ public class PersonsDAO implements DAO<Person> {
 
     @Override
     public Optional<List<Person>> getAll() throws SQLException {
-        return Optional.empty();
+        logger.info("get all persons ");
+
+        ResultSet res = getAllPrepStatement.executeQuery();
+        List<Person> persons = new ArrayList<>();
+
+        if (!res.next()){
+            logger.info("table is empty");
+            return Optional.empty();
+        }
+        //rewrite
+        while (res.next()) {
+            logger.info("person id =", res.getLong(1));
+            Person p = new Person(res.getLong(1), res.getString(2),res.getString(3));
+            persons.add(p);
+        }
+        return Optional.of(persons);
     }
 
     @Override
